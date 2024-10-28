@@ -1,0 +1,52 @@
+load("@aspect_rules_js//js:defs.bzl", "js_run_devserver")
+load("@npm//:@angular-devkit/architect-cli/package_json.bzl", architect_bin = "bin")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+npm_link_all_packages()
+
+SRCS = glob(
+    [
+        "src/**/*",
+        "public/**/*",
+    ],
+    exclude = [
+        "src/**/*.spec.ts",
+        "src/test.ts",
+    ],
+) + [
+    "angular.json",
+    "tsconfig.app.json",
+    "tsconfig.json",
+    "//:node_modules/@angular-devkit/build-angular",
+    "//:node_modules/@angular/cli",
+    "//:node_modules/@angular/core",
+    "//:node_modules/@angular/platform-browser",
+    "//:node_modules/@angular/router",
+    "//:node_modules/tslib",
+    "//:node_modules/typescript",
+    "//:node_modules/zone.js",
+]
+
+architect_bin.architect(
+    name = "prod",
+    srcs = SRCS,
+    args = [
+        "app:build:production",
+        "--output-path=dist",
+    ],
+    out_dirs = ["dist"],
+)
+
+architect_bin.architect_binary(
+    name = "ng_architect",
+    visibility = ["//visibility:public"],
+)
+
+js_run_devserver(
+    name = "dev",
+    args = [
+        "app:serve:development",
+    ],
+    data = SRCS,
+    tool = ":ng_architect",
+)
