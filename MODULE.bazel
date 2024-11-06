@@ -1,5 +1,4 @@
-bazel_dep(name = "aspect_rules_js", version = "2.0.2")
-bazel_dep(name = "aspect_rules_ts", version = "3.0.0")
+bazel_dep(name = "aspect_rules_js", version = "2.1.0")
 bazel_dep(name = "rules_nodejs", version = "6.3.1")
 
 node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
@@ -16,7 +15,3 @@ npm.npm_translate_lock(
     verify_node_modules_ignored = "//:.bazelignore",
 )
 use_repo(npm, "npm")
-
-rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
-rules_ts_ext.deps(ts_version_from = "//:package.json")
-use_repo(rules_ts_ext, "npm_typescript")
